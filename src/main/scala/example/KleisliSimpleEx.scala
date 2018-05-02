@@ -20,7 +20,7 @@ object KleisliSimpleEx extends App {
   type ErrorOr[A] = Either[Error, A]
   type To[A, B] = Kleisli[ErrorOr, A, B]
 
-  def toFailure[A](f:Error): ErrorOr[A] = Either.left(f)
+  def toFailure[A](f: Error): ErrorOr[A] = Either.left(f)
   def toSuccess[A](a: A): ErrorOr[A] = Either.right(a)
 
 
@@ -41,13 +41,9 @@ object KleisliSimpleEx extends App {
   val stringToAge: Kleisli[ErrorOr, String, Age] = stringToInt andThen computeAge
   val result: ErrorOr[Age] = stringToAge.run("foobar")
 
-  println(stringToAge.run("foobar"))
-  println("-----")
-  println(stringToAge.run("-23"))
-  println("-----")
-  println(stringToAge.run("3"))
-  println("-----")
-  println(stringToAge.run("12"))
-  println("-----")
-  println(stringToAge.run("25"))
+  stringToAge.run("foobar") mustEqual Left(IntParseError("foobar"))
+  stringToAge.run("-23") mustEqual Left(InvalidAge(-23))
+  stringToAge.run("3") mustEqual Right(Child)
+  stringToAge.run("12") mustEqual Right(Teen)
+  stringToAge.run("25") mustEqual Right(Adult)
 }
